@@ -3,9 +3,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 class Node:
-    def __init__(self):    
+    def __init__(self, learningRate):    
         self.weights = np.array([0.0, 0.0], dtype=np.float64)
         self.bias = np.float64(0.0)
+        self.learningRate = learningRate
 
     def getWeights(self):
         return self.weights

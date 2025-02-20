@@ -1,5 +1,7 @@
 import pandas as pd
 import neuralNetwok
+import perceptronNN
+import adalineNN
 
 
     
@@ -7,8 +9,9 @@ import neuralNetwok
 
 df = pd.read_csv('DataSetOne.csv')
 
-nn = neuralNetwok.NeuralNetwork(df)
-nn.learn(nn.perceptronLearning)
+nn = adalineNN.adalineNN(df, 0.02)
+nn.learn(1000)
+nn.printWeightsBias()
 
 
 
