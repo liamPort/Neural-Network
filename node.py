@@ -19,16 +19,6 @@ class Node:
         else:
             return -1
 
-    def learn(self, inputs, target):
-        prediction = self.predict(inputs)
-        if(prediction != target):
-            self.bias = self.bias + (target * 0.1)
-            for i in range(len(inputs)):
-                self.weights[i] = self.weights[i] + ((target * 0.1) * inputs[i])
-            return False
-        return True
-
-
     def predict(self, inputs):
         weightedSum = float(self.bias)
         for i in range(len(inputs)):
