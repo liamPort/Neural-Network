@@ -9,6 +9,7 @@ class Node:
         weightRange = 2/inputSize
         self.bias = random.uniform(-weightRange, weightRange)
         self.weights = []
+        self.velocities = [0] * inputSize
         for i in range(inputSize):
             self.weights.append(random.uniform(-weightRange, weightRange))
         
