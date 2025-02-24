@@ -5,27 +5,28 @@ import node
 import numpy as np
 
 class multiLayerNN():
-    def __init__(self, trainingDataSet, learningRate, Layers):
+    def __init__(self, trainingDataSet, learningRate, layerNums):
         self.DataSet = trainingDataSet
         self.learningRate = learningRate
         self.nodeLayers = []
         self.totalMse = []
-
-        #create the node layers 
-        for layerIndex in range(len(Layers)):
+        self.createNodes(layerNums)
+    
+    def createNodes(self, layerNums):
+        for layerIndex in range(len(layerNums)):
             self.nodeLayers.append([])
             if(layerIndex == 0):
-                inputSize = len(trainingDataSet[0][0])
+                inputSize = len(self.DataSet[0][0])
             else:
-                inputSize = Layers[layerIndex - 1]
-            for nodeIndex in range(Layers[layerIndex]):
+                inputSize = layerNums[layerIndex - 1]
+            for nodeIndex in range(layerNums[layerIndex]):
                 self.nodeLayers[layerIndex].append(node.Node(inputSize))
-                #self.nodeLayers[layerIndex][nodeIndex].printNodeInfo(f"[{layerIndex}][{nodeIndex}]")
     
     def forwardPass(self, inputs):
         activations = []
         weightedSums = []
         for layerIndex in range(len(self.nodeLayers)):
+            #passes through each layer
             activations.append([])
             weightedSums.append([])
             for nodeIndex in range(len(self.nodeLayers[layerIndex])):
@@ -33,11 +34,13 @@ class multiLayerNN():
                 if layerIndex == 0:
                     weightedSum = self.predict(node, inputs)
                 else:
+                    #if its a inner layer, pridict based on previcious layer
                     weightedSum = self.predict(node, activations[layerIndex-1])
                 activations[layerIndex].append(utils.sigmoid(weightedSum))
                 weightedSums[layerIndex].append(weightedSum)
         return activations, weightedSums, activations[layerIndex][nodeIndex]
-    
+
+
     def backwardPass(self, layerActivations, layerweightedSums, target, inputs):
         LayerErrorTerms =  []
         #set LayerErrorTerms to have the same size as layerActivations
@@ -101,7 +104,7 @@ class multiLayerNN():
                 self.backwardPass(layerActivations, layerweightedSums, target, inputs)
             
 
-            self.totalMse.append(utils.mseCalculation(predictions, targets))            
+            self.totalMse.append(utils.mseCalculation(predictions, targets))     
 
                 
         
@@ -110,7 +113,7 @@ class multiLayerNN():
 
 df = pd.read_csv('DataSetOne.csv')
 dataSet = list(zip(df[["x1", "x2"]].to_numpy(), df[["class"]].to_numpy()))
-nn = multiLayerNN(dataSet, 0.1, [4,2,1])
+nn = multiLayerNN(dataSet, 0.1, [5,2,1])
 nn.learn(5000)
 nn.plotLoss()
 
