@@ -33,10 +33,15 @@ class multiLayerNN():
                 node = self.nodeLayers[layerIndex][nodeIndex]
                 if layerIndex == 0:
                     weightedSum = self.predict(node, inputs)
+                    activations[layerIndex].append(weightedSum)
+                elif layerIndex == len(self.nodeLayers) - 1:
+                    #if at output node
+                    weightedSum = self.predict(node, activations[layerIndex-1])
+                    activations[layerIndex].append(weightedSum)
                 else:
                     #if its a inner layer, pridict based on previcious layer
                     weightedSum = self.predict(node, activations[layerIndex-1])
-                activations[layerIndex].append(utils.sigmoid(weightedSum))
+                    activations[layerIndex].append(utils.sigmoid(weightedSum))
                 weightedSums[layerIndex].append(weightedSum)
         return activations, weightedSums, activations[layerIndex][nodeIndex]
 
@@ -57,7 +62,7 @@ class multiLayerNN():
             for nodeIndex in range(len(self.nodeLayers[layerIndex])):
                 activationGradient = utils.derivativeSigmoid(layerweightedSums[layerIndex][nodeIndex])
                 if(lastNodes):
-                    LayerErrorTerms[layerIndex][nodeIndex] = ((target - layerActivations[layerIndex][nodeIndex]) * activationGradient)[0]
+                    LayerErrorTerms[layerIndex][nodeIndex] = ((target - layerActivations[layerIndex][nodeIndex]))[0]
                 else:
                     #calculate weightedError for each node infront
                     weightedSumError = 0
@@ -109,13 +114,6 @@ class multiLayerNN():
                 
         
 
-
-
-df = pd.read_csv('DataSetOne.csv')
-dataSet = list(zip(df[["x1", "x2"]].to_numpy(), df[["class"]].to_numpy()))
-nn = multiLayerNN(dataSet, 0.1, [5,2,1])
-nn.learn(5000)
-nn.plotLoss()
 
 
 
